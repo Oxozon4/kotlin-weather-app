@@ -25,12 +25,13 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.oxozon.weatherapp.R
+import com.oxozon.weatherapp.models.Constants
 import com.oxozon.weatherapp.models.WeatherModel
 import com.oxozon.weatherapp.services.RetrofitInstance
+import com.oxozon.weatherapp.services.WeatherService
 import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import retrofit2.*
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
     private lateinit var locationManager: LocationManager
@@ -95,6 +96,23 @@ class MainActivity : AppCompatActivity() {
 
             val longitude = mLastLocation.longitude
             Log.i("Current Longitude", "$longitude")
+            getLocationWeatherDetails()
+        }
+    }
+
+    private fun getLocationWeatherDetails() {
+        if (Constants.isNetworkAvailable(this)) {
+            Toast.makeText(this@MainActivity, "Pomyślnie połączyłeś się z internetem", Toast.LENGTH_SHORT).show()
+            val retrofit : Retrofit = Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            val service: WeatherService = retrofit.create<WeatherService>(WeatherService::class.java)
+
+
+        } else {
+            Toast.makeText(this, "Nie nawiązano połaczenia z internetem", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -121,41 +139,41 @@ class MainActivity : AppCompatActivity() {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
-    private fun getCurrentWeatherData(city: String) {
-        val retrofitData = RetrofitInstance.api.getCurrentWeather(city)
-        retrofitData.enqueue(object : Callback<WeatherModel?> {
-            override fun onResponse(call: Call<WeatherModel?>, response: Response<WeatherModel?>) {
-                apiResponseBody = response.body()!! // może się nie zapisywać przy logowaniu
-                // aktualizacja widoku
-                sharedPref.edit().putString("data", Gson().toJson(apiResponseBody)).apply() // nazwa data - do wyciągania danych
-            }
+//    private fun getCurrentWeatherData(city: String) {
+//        val retrofitData = RetrofitInstance.api.getCurrentWeather(city)
+//        retrofitData.enqueue(object : Callback<WeatherModel?> {
+//            override fun onResponse(call: Call<WeatherModel?>, response: Response<WeatherModel?>) {
+//                apiResponseBody = response.body()!! // może się nie zapisywać przy logowaniu
+//                // aktualizacja widoku
+//                sharedPref.edit().putString("data", Gson().toJson(apiResponseBody)).apply() // nazwa data - do wyciągania danych
+//            }
+//
+//            override fun onFailure(call: Call<WeatherModel?>, t: Throwable) {
+//                Log.d("MainActivity", "Error")
+//            }
+//        })
+//    }
 
-            override fun onFailure(call: Call<WeatherModel?>, t: Throwable) {
-                Log.d("MainActivity", "Error")
-            }
-        })
-    }
-
-    private fun readFromFile() {
-        val data = sharedPref.getString("api", null)
-        // file does not exist
-        if (data == null) {
-            getCurrentWeatherData(cityName)
-            Toast.makeText(
-                this@MainActivity,
-                "No file saved. Default city ($cityName) is being set.",
-                Toast.LENGTH_LONG
-            ).show()
-            // file exist
-        } else {
-            val json = JSONObject(data)
-            val lastCity = json.getString("name")
-            getCurrentWeatherData(lastCity)
-            Toast.makeText(
-                this@MainActivity,
-                "Last location: $lastCity is being set.",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
+//    private fun readFromFile() {
+//        val data = sharedPref.getString("api", null)
+//        // file does not exist
+//        if (data == null) {
+//            getCurrentWeatherData(cityName)
+//            Toast.makeText(
+//                this@MainActivity,
+//                "No file saved. Default city ($cityName) is being set.",
+//                Toast.LENGTH_LONG
+//            ).show()
+//            // file exist
+//        } else {
+//            val json = JSONObject(data)
+//            val lastCity = json.getString("name")
+//            getCurrentWeatherData(lastCity)
+//            Toast.makeText(
+//                this@MainActivity,
+//                "Last location: $lastCity is being set.",
+//                Toast.LENGTH_LONG
+//            ).show()
+//        }
+//    }
 }
