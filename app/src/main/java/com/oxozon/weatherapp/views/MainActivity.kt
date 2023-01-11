@@ -2,6 +2,7 @@ package com.oxozon.weatherapp.views
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -16,10 +17,9 @@ import android.provider.Settings
 import android.util.Log
 import android.webkit.PermissionRequest
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
+//import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.location.*
-import com.google.gson.Gson
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -27,36 +27,45 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.oxozon.weatherapp.R
 import com.oxozon.weatherapp.models.Constants
 import com.oxozon.weatherapp.models.WeatherModel
-import com.oxozon.weatherapp.services.RetrofitInstance
 import com.oxozon.weatherapp.services.WeatherService
-import org.json.JSONObject
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
     private lateinit var locationManager: LocationManager
-    private var currentLocation: Location? = null
-    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
-    lateinit var apiResponseBody: WeatherModel
+
+    //    private var currentLocation: Location? = null
+//    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+//    lateinit var apiResponseBody: WeatherModel
     private lateinit var cityName: String
     private lateinit var sharedPref: SharedPreferences
 
-    private lateinit var mFusedLocationClient : FusedLocationProviderClient
+    private lateinit var mFusedLocationClient: FusedLocationProviderClient
+    private var mProgressDialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        sharedPref = getPreferences(Context.MODE_PRIVATE)
 
+        // Initialize the Fused location variable
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-
         if (!isLocationEnabled()) {
-            Toast.makeText(this, "By zagwarantować aktualność danych wymagane jest połączenie internetowe", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Your location provider is turned off. Please turn it on.",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            // This will redirect you to settings from where you need to turn on the location provider.
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-            startActivity((intent))
+            startActivity(intent)
         } else {
-            Dexter.withActivity(this).withPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+            Dexter.withActivity(this)
+                .withPermissions(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
                 .withListener(object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         if (report!!.areAllPermissionsGranted()) {
@@ -64,7 +73,11 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         if (report.isAnyPermissionPermanentlyDenied) {
-                            Toast.makeText(this@MainActivity, "By zagwarantować aktualność danych wymagane jest połączenie internetowe", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@MainActivity,
+                                "You have denied location permission. Please allow it is mandatory.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
 
@@ -74,52 +87,32 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         showRationalDialogForPermissions()
                     }
-                }).onSameThread().check()
-            Toast.makeText(this, "Aplikacja pobrała najnowsze dane bazując na Twojej obecnej lokalizacji", Toast.LENGTH_SHORT).show()
-
+                }).onSameThread()
+                .check()
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private fun requestLocationData() {
-        val mLocationRequest = LocationRequest()
-        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    /**
+     * A function which is used to verify that the location or GPS is enable or not of the user's device.
+     */
+    private fun isLocationEnabled(): Boolean {
 
-        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
+        val locationManager: LocationManager =
+            getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
     }
 
-    private val mLocationCallback = object : LocationCallback() {
-        override fun onLocationResult(locationResult: LocationResult) {
-            val mLastLocation: Location = locationResult.lastLocation
-            val latitude = mLastLocation.latitude
-            Log.i("Current latitude", "$latitude")
-
-            val longitude = mLastLocation.longitude
-            Log.i("Current Longitude", "$longitude")
-            getLocationWeatherDetails()
-        }
-    }
-
-    private fun getLocationWeatherDetails() {
-        if (Constants.isNetworkAvailable(this)) {
-            Toast.makeText(this@MainActivity, "Pomyślnie połączyłeś się z internetem", Toast.LENGTH_SHORT).show()
-            val retrofit : Retrofit = Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-            val service: WeatherService = retrofit.create<WeatherService>(WeatherService::class.java)
-
-
-        } else {
-            Toast.makeText(this, "Nie nawiązano połaczenia z internetem", Toast.LENGTH_SHORT).show()
-        }
-    }
-
+    /**
+     * A function used to show the alert dialog when the permissions are denied and need to allow it from settings app info.
+     */
     private fun showRationalDialogForPermissions() {
-        AlertDialog.Builder(this).setMessage("Wygląda na to, że wyłączyłeś rekomendowane usługi internetowe!")
-            .setPositiveButton("PRZEJDŹ DO USTAWIEŃ") {
-                _, _ ->
+        AlertDialog.Builder(this)
+            .setMessage("It Looks like you have turned off permissions required for this feature. It can be enabled under Application Settings")
+            .setPositiveButton(
+                "GO TO SETTINGS"
+            ) { _, _ ->
                 try {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                     val uri = Uri.fromParts("package", packageName, null)
@@ -129,15 +122,123 @@ class MainActivity : AppCompatActivity() {
                     e.printStackTrace()
                 }
             }
-            .setNegativeButton("ODRZUĆ") {
-                dialog, _ -> dialog.dismiss()
+            .setNegativeButton("Cancel") { dialog,
+                                           _ ->
+                dialog.dismiss()
             }.show()
     }
 
-    private fun isLocationEnabled(): Boolean {
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    /**
+     * A function to request the current location. Using the fused location provider client.
+     */
+    @SuppressLint("MissingPermission")
+    private fun requestLocationData() {
+
+        val mLocationRequest = LocationRequest()
+        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        mFusedLocationClient.requestLocationUpdates(
+            mLocationRequest, mLocationCallback,
+            Looper.myLooper()
+        )
     }
+
+    /**
+     * A location callback object of fused location provider client where we will get the current location details.
+     */
+    private val mLocationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            val mLastLocation: Location = locationResult.lastLocation
+            val latitude = mLastLocation.latitude
+            Log.i("Current Latitude", "$latitude")
+
+            val longitude = mLastLocation.longitude
+            Log.i("Current Longitude", "$longitude")
+
+            getLocationWeatherDetails(latitude, longitude)
+        }
+    }
+
+    /**
+     * Function is used to get the weather details of the current location based on the latitude longitude
+     */
+    private fun getLocationWeatherDetails(latitude: Double, longitude: Double) {
+
+        if (Constants.isNetworkAvailable(this@MainActivity)) {
+
+            val retrofit: Retrofit = Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            val service: WeatherService =
+                retrofit.create<WeatherService>(WeatherService::class.java)
+
+            val listCall: Call<WeatherModel> = service.getWeather(
+                latitude, longitude, Constants.METRIC_UNIT, Constants.APP_ID
+            )
+            showCustomProgressDialog()
+            listCall.enqueue(object : Callback<WeatherModel> {
+                @SuppressLint("SetTextI18n")
+                override fun onResponse(
+                    call: Call<WeatherModel>,
+                    response: Response<WeatherModel>
+                ) {
+                    if (response!!.isSuccessful) {
+                        hideProgressDialog()
+                        val weatherList: WeatherModel? = response.body()
+                        Log.i("Response Result", "$weatherList")
+                    } else {
+                        when (response.code()) {
+                            400 -> {
+                                Log.e("Error 400", "Bad Request")
+                            }
+                            404 -> {
+                                Log.e("Error 404", "Not Found")
+                            }
+                            else -> {
+                                Log.e("Error", "Generic Error")
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<WeatherModel>, t: Throwable) {
+                    hideProgressDialog()
+                    Log.e("Errorrrrr", t.message.toString())
+                }
+            })
+        } else {
+            Toast.makeText(
+                this@MainActivity,
+                "No internet connection available.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    // TODO (STEP 5: Create a functions for SHOW and HIDE progress dialog.)
+    // START
+    /**
+     * Method is used to show the Custom Progress Dialog.
+     */
+    private fun showCustomProgressDialog() {
+        mProgressDialog = Dialog(this)
+        mProgressDialog!!.setContentView(R.layout.dialog_custom_progress)
+        mProgressDialog!!.show()
+    }
+
+    /**
+     * This function is used to dismiss the progress dialog if it is visible to user.
+     */
+    private fun hideProgressDialog() {
+        if (mProgressDialog != null) {
+            mProgressDialog!!.dismiss()
+        }
+    }
+    // END
+}
 
 //    private fun getCurrentWeatherData(city: String) {
 //        val retrofitData = RetrofitInstance.api.getCurrentWeather(city)
@@ -176,4 +277,3 @@ class MainActivity : AppCompatActivity() {
 //            ).show()
 //        }
 //    }
-}
