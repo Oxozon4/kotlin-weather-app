@@ -30,6 +30,9 @@ import com.oxozon.weatherapp.models.WeatherModel
 import com.oxozon.weatherapp.services.WeatherService
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
+import android.widget.TextView
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var locationManager: LocationManager
@@ -236,13 +239,41 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupUI(weatherList: WeatherModel) {
         for(i in weatherList.weather.indices) {
             Log.i("Weather Name", weatherList.weather.toString())
+            findViewById<TextView>(R.id.tv_main).text = weatherList.weather[i].main
+            findViewById<TextView>(R.id.tv_main_description).text = weatherList.weather[i].description
+            findViewById<TextView>(R.id.tv_temp).text= weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
 
+            findViewById<TextView>(R.id.tv_humidity).text= weatherList.main.humidity.toString() + " %"
+            findViewById<TextView>(R.id.tv_min).text = weatherList.main.temp_min.toString() + " min"
+            findViewById<TextView>(R.id.tv_max).text = weatherList.main.temp_max.toString() + " max"
+            findViewById<TextView>(R.id.tv_speed).text = weatherList.wind.speed.toString()
+            findViewById<TextView>(R.id.tv_name).text = weatherList.name
+            findViewById<TextView>(R.id.tv_country).text = weatherList.sys.country
+
+            findViewById<TextView>(R.id.tv_sunrise_time).text = unixTime(weatherList.sys.sunrise)
+            findViewById<TextView>(R.id.tv_sunset_time).text = unixTime(weatherList.sys.sunset)
         }
     }
-    // END
+
+    private fun getUnit(value: String): String {
+        var value = "°C"
+        if (value == "US" || value == "LR" || value == "MM") {
+            value = "°F"
+        }
+        return value
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun unixTime(timex: Long): String? {
+        val date = Date(timex * 1000L)
+        val sdf = SimpleDateFormat("HH:mm", Locale.UK)
+        sdf.timeZone = TimeZone.getDefault()
+        return sdf.format(date)
+    }
 }
 
 //    private fun getCurrentWeatherData(city: String) {
