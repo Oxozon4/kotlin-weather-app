@@ -185,9 +185,12 @@ class MainActivity : AppCompatActivity() {
                     call: Call<WeatherModel>,
                     response: Response<WeatherModel>
                 ) {
-                    if (response!!.isSuccessful) {
+                    if (response.isSuccessful) {
                         hideProgressDialog()
                         val weatherList: WeatherModel? = response.body()
+                        if (weatherList != null) {
+                            setupUI(weatherList)
+                        }
                         Log.i("Response Result", "$weatherList")
                     } else {
                         when (response.code()) {
@@ -218,11 +221,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // TODO (STEP 5: Create a functions for SHOW and HIDE progress dialog.)
-    // START
-    /**
-     * Method is used to show the Custom Progress Dialog.
-     */
     private fun showCustomProgressDialog() {
         mProgressDialog = Dialog(this)
         mProgressDialog!!.setContentView(R.layout.dialog_custom_progress)
@@ -235,6 +233,13 @@ class MainActivity : AppCompatActivity() {
     private fun hideProgressDialog() {
         if (mProgressDialog != null) {
             mProgressDialog!!.dismiss()
+        }
+    }
+
+    private fun setupUI(weatherList: WeatherModel) {
+        for(i in weatherList.weather.indices) {
+            Log.i("Weather Name", weatherList.weather.toString())
+
         }
     }
     // END
