@@ -34,15 +34,14 @@ import com.oxozon.weatherapp.services.WeatherService
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import android.widget.TextView
+import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var locationManager: LocationManager
 
-    //    private var currentLocation: Location? = null
-//    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
-//    lateinit var apiResponseBody: WeatherModel
+    private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var cityName: String
     private lateinit var sharedPref: SharedPreferences
 
@@ -55,7 +54,9 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize the Fused location variable
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        mSharedPreferences = getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
 
+        setupUI()
         if (!isLocationEnabled()) {
             Toast.makeText(
                 this,
@@ -186,7 +187,7 @@ class MainActivity : AppCompatActivity() {
             )
             showCustomProgressDialog()
             listCall.enqueue(object : Callback<WeatherModel> {
-                @SuppressLint("SetTextI18n")
+                @SuppressLint("SetTextI18n", "CommitPrefEdits")
                 override fun onResponse(
                     call: Call<WeatherModel>,
                     response: Response<WeatherModel>
@@ -194,9 +195,13 @@ class MainActivity : AppCompatActivity() {
                     if (response.isSuccessful) {
                         hideProgressDialog()
                         val weatherList: WeatherModel? = response.body()
-                        if (weatherList != null) {
-                            setupUI(weatherList)
-                        }
+
+                        val weatherResponseJsonString = Gson().toJson(weatherList)
+                            val editor = mSharedPreferences.edit()
+                            editor.putString(Constants.WEATHER_RESPONSE_DATA, weatherResponseJsonString)
+                            editor.apply()
+                            setupUI()
+
                         Log.i("Response Result", "$weatherList")
                     } else {
                         when (response.code()) {
@@ -257,22 +262,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setupUI(weatherList: WeatherModel) {
-        for(i in weatherList.weather.indices) {
-            Log.i("Weather Name", weatherList.weather.toString())
-            findViewById<TextView>(R.id.tv_main).text = weatherList.weather[i].main
-            findViewById<TextView>(R.id.tv_main_description).text = weatherList.weather[i].description
-            findViewById<TextView>(R.id.tv_temp).text= weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
+    private fun setupUI() {
 
-            findViewById<TextView>(R.id.tv_humidity).text= weatherList.main.humidity.toString() + " %"
-            findViewById<TextView>(R.id.tv_min).text = weatherList.main.temp_min.toString() + " min"
-            findViewById<TextView>(R.id.tv_max).text = weatherList.main.temp_max.toString() + " max"
-            findViewById<TextView>(R.id.tv_speed).text = weatherList.wind.speed.toString()
-            findViewById<TextView>(R.id.tv_name).text = weatherList.name
-            findViewById<TextView>(R.id.tv_country).text = weatherList.sys.country
+        val weatherResponseJsonString = mSharedPreferences.getString(Constants.WEATHER_RESPONSE_DATA, "")
 
-            findViewById<TextView>(R.id.tv_sunrise_time).text = unixTime(weatherList.sys.sunrise)
-            findViewById<TextView>(R.id.tv_sunset_time).text = unixTime(weatherList.sys.sunset)
+        if (!weatherResponseJsonString.isNullOrEmpty()) {
+            val weatherList = Gson().fromJson(weatherResponseJsonString, WeatherModel::class.java)
+            for(i in weatherList.weather.indices) {
+                Log.i("Weather Name", weatherList.weather.toString())
+                findViewById<TextView>(R.id.tv_main).text = weatherList.weather[i].main
+                findViewById<TextView>(R.id.tv_main_description).text = weatherList.weather[i].description
+                findViewById<TextView>(R.id.tv_temp).text= weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
+
+                findViewById<TextView>(R.id.tv_humidity).text= weatherList.main.humidity.toString() + " %"
+                findViewById<TextView>(R.id.tv_min).text = weatherList.main.temp_min.toString() + " min"
+                findViewById<TextView>(R.id.tv_max).text = weatherList.main.temp_max.toString() + " max"
+                findViewById<TextView>(R.id.tv_speed).text = weatherList.wind.speed.toString()
+                findViewById<TextView>(R.id.tv_name).text = weatherList.name
+                findViewById<TextView>(R.id.tv_country).text = weatherList.sys.country
+
+                findViewById<TextView>(R.id.tv_sunrise_time).text = unixTime(weatherList.sys.sunrise)
+                findViewById<TextView>(R.id.tv_sunset_time).text = unixTime(weatherList.sys.sunset)
+            }
         }
     }
 
