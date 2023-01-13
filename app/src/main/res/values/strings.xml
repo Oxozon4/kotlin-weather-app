@@ -4,4 +4,6 @@
     <string name="image_contentDescription">image</string>
     <string name="miles_per_hour">miles/hour</string>
     <string name="action_refresh">miles/hour</string>
+    <string name="enter_location">Enter location..</string>
+    <string name="search">Search</string>
 </resources>

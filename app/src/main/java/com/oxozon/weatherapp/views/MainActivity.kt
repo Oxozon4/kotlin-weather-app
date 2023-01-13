@@ -279,14 +279,11 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun setupUI() {
-
         val weatherResponseJsonString = mSharedPreferences.getString(weatherData, "")
 
         if (!weatherResponseJsonString.isNullOrEmpty()) {
             val weatherList = Gson().fromJson(weatherResponseJsonString, WeatherModel::class.java)
             for(i in weatherList.weather.indices) {
-                Log.i("Weather Name", weatherList.weather.toString())
-                Log.d("test", "using variables!")
                 firstFragment.tvCity.text = weatherList.name
                 firstFragment.tvCountry.text = weatherList.sys.country
 
@@ -297,7 +294,7 @@ class MainActivity : AppCompatActivity() {
                 firstFragment.tvMainDescription.text = weatherList.weather[i].description
 
                 firstFragment.tvTemp.text = weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
-                firstFragment.tvPressure.text = weatherList.main.pressure.toString() + "hPa"
+                firstFragment.tvPressure.text = weatherList.main.pressure.toString() + " hPa"
             }
         }
     }
