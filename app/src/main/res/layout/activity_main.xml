@@ -9,24 +9,22 @@
     android:padding="@dimen/main_screen_content_padding"
     tools:context=".views.MainActivity">
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:hint="Wprowadź lokacje"/>
+<!--    <com.google.android.material.textfield.TextInputEditText-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:minHeight="48dp"-->
+<!--        android:hint="Wprowadź lokacje"/>-->
 
-    <Button
-        android:id="@+id/buttontest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Click me" />
+<!--    <Button-->
+<!--        android:id="@+id/buttontest"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Click me" />-->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
-
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"

@@ -7,10 +7,12 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.drawable.Icon
 import android.location.Location
 import android.location.LocationManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
@@ -18,7 +20,6 @@ import android.provider.Settings
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.PermissionRequest
 import android.widget.Toast
 //import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
@@ -28,7 +29,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.oxozon.weatherapp.R
-import com.oxozon.weatherapp.models.Constants
 import com.oxozon.weatherapp.models.WeatherModel
 import com.oxozon.weatherapp.services.WeatherService
 import retrofit2.*
@@ -39,14 +39,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var locationManager: LocationManager
+    // Const
+    private val appId: String = "cc7c254dc3aa9de5fb478224408c6cfb"
+    private val baseUrl: String = "https://api.openweathermap.org/data/"
+    private val preferenceName: String = "WeatherAppPreference"
+    private val weatherData: String = "weather_response_data"
 
     private lateinit var mSharedPreferences: SharedPreferences
-    private lateinit var cityName: String
-    private lateinit var sharedPref: SharedPreferences
-
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     private var mProgressDialog: Dialog? = null
+    private var chosenMeasurementUnit: String = "metric"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize the Fused location variable
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        mSharedPreferences = getSharedPreferences(Constants.PREFERENCE_NAME, Context.MODE_PRIVATE)
+        mSharedPreferences = getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
 
         setupUI()
         if (!isLocationEnabled()) {
@@ -167,15 +169,34 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+            return when {
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
+        } else {
+            val networkInfo = connectivityManager.activeNetworkInfo
+            return networkInfo != null && networkInfo.isConnectedOrConnecting
+        }
+    }
+
     /**
      * Function is used to get the weather details of the current location based on the latitude longitude
      */
     private fun getLocationWeatherDetails(latitude: Double, longitude: Double) {
 
-        if (Constants.isNetworkAvailable(this@MainActivity)) {
+        if (isNetworkAvailable(this@MainActivity)) {
 
             val retrofit: Retrofit = Retrofit.Builder()
-                .baseUrl(Constants.BASE_URL)
+                .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
@@ -183,7 +204,7 @@ class MainActivity : AppCompatActivity() {
                 retrofit.create<WeatherService>(WeatherService::class.java)
 
             val listCall: Call<WeatherModel> = service.getWeather(
-                latitude, longitude, Constants.METRIC_UNIT, Constants.APP_ID
+                latitude, longitude, chosenMeasurementUnit, appId
             )
             showCustomProgressDialog()
             listCall.enqueue(object : Callback<WeatherModel> {
@@ -198,7 +219,7 @@ class MainActivity : AppCompatActivity() {
 
                         val weatherResponseJsonString = Gson().toJson(weatherList)
                             val editor = mSharedPreferences.edit()
-                            editor.putString(Constants.WEATHER_RESPONSE_DATA, weatherResponseJsonString)
+                            editor.putString(weatherData, weatherResponseJsonString)
                             editor.apply()
                             setupUI()
 
@@ -264,7 +285,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun setupUI() {
 
-        val weatherResponseJsonString = mSharedPreferences.getString(Constants.WEATHER_RESPONSE_DATA, "")
+        val weatherResponseJsonString = mSharedPreferences.getString(weatherData, "")
 
         if (!weatherResponseJsonString.isNullOrEmpty()) {
             val weatherList = Gson().fromJson(weatherResponseJsonString, WeatherModel::class.java)
@@ -273,14 +294,12 @@ class MainActivity : AppCompatActivity() {
                 findViewById<TextView>(R.id.tv_main).text = weatherList.weather[i].main
                 findViewById<TextView>(R.id.tv_main_description).text = weatherList.weather[i].description
                 findViewById<TextView>(R.id.tv_temp).text= weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
-
                 findViewById<TextView>(R.id.tv_humidity).text= weatherList.main.humidity.toString() + " %"
                 findViewById<TextView>(R.id.tv_min).text = weatherList.main.temp_min.toString() + " min"
                 findViewById<TextView>(R.id.tv_max).text = weatherList.main.temp_max.toString() + " max"
                 findViewById<TextView>(R.id.tv_speed).text = weatherList.wind.speed.toString()
                 findViewById<TextView>(R.id.tv_name).text = weatherList.name
                 findViewById<TextView>(R.id.tv_country).text = weatherList.sys.country
-
                 findViewById<TextView>(R.id.tv_sunrise_time).text = unixTime(weatherList.sys.sunrise)
                 findViewById<TextView>(R.id.tv_sunset_time).text = unixTime(weatherList.sys.sunset)
             }
@@ -288,11 +307,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getUnit(value: String): String {
-        var value = "°C"
+        var unitValue = "°C"
         if (value == "US" || value == "LR" || value == "MM") {
-            value = "°F"
+            unitValue = "°F"
         }
-        return value
+        return unitValue
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -303,21 +322,6 @@ class MainActivity : AppCompatActivity() {
         return sdf.format(date)
     }
 }
-
-//    private fun getCurrentWeatherData(city: String) {
-//        val retrofitData = RetrofitInstance.api.getCurrentWeather(city)
-//        retrofitData.enqueue(object : Callback<WeatherModel?> {
-//            override fun onResponse(call: Call<WeatherModel?>, response: Response<WeatherModel?>) {
-//                apiResponseBody = response.body()!! // może się nie zapisywać przy logowaniu
-//                // aktualizacja widoku
-//                sharedPref.edit().putString("data", Gson().toJson(apiResponseBody)).apply() // nazwa data - do wyciągania danych
-//            }
-//
-//            override fun onFailure(call: Call<WeatherModel?>, t: Throwable) {
-//                Log.d("MainActivity", "Error")
-//            }
-//        })
-//    }
 
 //    private fun readFromFile() {
 //        val data = sharedPref.getString("api", null)
