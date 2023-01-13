@@ -6,4 +6,7 @@
     <string name="action_refresh">miles/hour</string>
     <string name="enter_location">Enter location..</string>
     <string name="search">Search</string>
+    <string name="humidity">Humidity</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

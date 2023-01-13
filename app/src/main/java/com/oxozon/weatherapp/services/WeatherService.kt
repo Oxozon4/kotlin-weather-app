@@ -1,6 +1,6 @@
 package com.oxozon.weatherapp.services
 
-import com.oxozon.weatherapp.models.WeatherModel
+import com.oxozon.weatherapp.weatherModels.WeatherModel
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

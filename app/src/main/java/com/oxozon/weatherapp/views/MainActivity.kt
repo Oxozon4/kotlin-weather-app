@@ -29,19 +29,16 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.oxozon.weatherapp.R
-import com.oxozon.weatherapp.models.WeatherModel
+import com.oxozon.weatherapp.weatherModels.WeatherModel
 import com.oxozon.weatherapp.services.WeatherService
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
-import android.widget.TextView
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.*
-import android.view.LayoutInflater
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import com.google.android.material.textfield.TextInputEditText
-import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
     // Const
@@ -52,6 +49,7 @@ class MainActivity : AppCompatActivity() {
 
     // fragments
     private lateinit var firstFragment: FirstFragment
+    private lateinit var secondFragment: SecondFragment
 
     // variables
     private lateinit var mSharedPreferences: SharedPreferences
@@ -67,6 +65,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         firstFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as FirstFragment
+        secondFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView2) as SecondFragment
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mSharedPreferences = getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
         setBtnClickListener()
@@ -133,6 +133,10 @@ class MainActivity : AppCompatActivity() {
 
     fun onFirstFragmentCreated() {
         Log.d("test", "first fragmentCreated")
+    }
+
+    fun onSecondFragmentCreated() {
+        Log.d("test", "second fragment Created")
         setupUI()
     }
 
@@ -263,7 +267,6 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onFailure(call: Call<WeatherModel>, t: Throwable) {
                     hideProgressDialog()
-                    Log.e("Errorrrrr", t.message.toString())
                 }
             })
         } else if (city != "") {
@@ -378,6 +381,12 @@ class MainActivity : AppCompatActivity() {
 
                 firstFragment.tvTemp.text = weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
                 firstFragment.tvPressure.text = weatherList.main.pressure.toString() + " hPa"
+
+                secondFragment.tvWindStrength.text = weatherList.wind.speed.toString() + " m/s"
+                secondFragment.tvWindDirection.text = weatherList.wind.deg.toString() + "°"
+
+                secondFragment.tvVisibility.text = (weatherList.visibility / 100).toString() + "%"
+                secondFragment.tvHumidity.text = weatherList.main.humidity.toString() + "%"
             }
         }
     }

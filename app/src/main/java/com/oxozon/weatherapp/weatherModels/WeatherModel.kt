@@ -1,4 +1,4 @@
-package com.oxozon.weatherapp.models
+package com.oxozon.weatherapp.weatherModels
 
 data class WeatherModel(
     val base: String,
