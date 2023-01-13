@@ -379,6 +379,15 @@ class MainActivity : AppCompatActivity() {
                 firstFragment.tvMain.text = weatherList.weather[i].main
                 firstFragment.tvMainDescription.text = weatherList.weather[i].description
 
+                when (weatherList.weather[i].description) {
+                    "Clear" -> firstFragment.ivMain.setImageResource(R.drawable.sun_vector)
+                    "Thunderstorm" -> firstFragment.ivMain.setImageResource(R.drawable.storm_vector)
+                    "Rain", "Drizzle" -> firstFragment.ivMain.setImageResource(R.drawable.water_vector)
+                    "Clouds" -> firstFragment.ivMain.setImageResource(R.drawable.cloud_vector)
+                    "Snow" -> firstFragment.ivMain.setImageResource(R.drawable.snow_vector)
+                    else -> firstFragment.ivMain.setImageResource(R.drawable.cloud_vector)
+                }
+
                 firstFragment.tvTemp.text = weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
                 firstFragment.tvPressure.text = weatherList.main.pressure.toString() + " hPa"
 
