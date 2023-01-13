@@ -58,6 +58,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     private var mProgressDialog: Dialog? = null
     private var chosenMeasurementUnit: String = "metric"
+    private var selectedCity: String? = null
+    private var userLatitude: Double? = null
+    private var userLongitude: Double? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +80,7 @@ class MainActivity : AppCompatActivity() {
             val inputField = findViewById<TextInputEditText>(R.id.cityInput)
             val inputFieldValue = inputField.text.toString()
             if (inputFieldValue != "") {
+                selectedCity = inputFieldValue
                 getLocationWeatherDetails(null, null, inputFieldValue)
             }
             (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
@@ -179,8 +183,10 @@ class MainActivity : AppCompatActivity() {
         override fun onLocationResult(locationResult: LocationResult) {
             val mLastLocation: Location = locationResult.lastLocation
             val latitude = mLastLocation.latitude
-            Log.i("Current Latitude", "$latitude")
             val longitude = mLastLocation.longitude
+            userLatitude = latitude
+            userLongitude = longitude
+            Log.i("Current Latitude", "$latitude")
             Log.i("Current Longitude", "$longitude")
 
             getLocationWeatherDetails(latitude, longitude, null)
@@ -335,7 +341,13 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
 
             R.id.action_refresh -> {
-                requestLocationData()
+                if (selectedCity != null && selectedCity.toString() != "") {
+                    getLocationWeatherDetails(null, null, selectedCity)
+                } else if (userLatitude != null && userLongitude != null) {
+                    getLocationWeatherDetails(userLatitude, userLongitude, null)
+                } else {
+                    requestLocationData()
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
