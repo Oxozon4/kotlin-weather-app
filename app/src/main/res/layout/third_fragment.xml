@@ -6,11 +6,11 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     >
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -30,39 +30,78 @@
                 android:padding="@dimen/card_view_content_padding">
 
                 <ImageView
-                    android:id="@+id/iv_wind"
+                    android:id="@+id/iv_main"
                     android:layout_width="@dimen/identification_image_size"
                     android:layout_height="@dimen/identification_image_size"
                     android:layout_marginEnd="@dimen/identification_image_marginEnd"
                     android:contentDescription="@string/image_contentDescription"
-                    app:srcCompat="@drawable/wind_vector" />
-
+                    app:srcCompat="@drawable/cloud_vector" />
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left">
 
-                    <TextView
-                        android:id="@+id/tv_wind_strength"
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:textColor="@color/primary_text_color"
-                        android:textSize="@dimen/label_text_size"
-                        android:textStyle="bold"
-                        tools:text="Wind" />
+                        android:orientation="vertical"
+                        android:layout_weight="1">
 
-                    <TextView
-                        android:id="@+id/tv_wind_direction"
-                        android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/tv_main"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Weather" />
+
+                        <TextView
+                            android:id="@+id/tv_main_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="condition" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:textColor="@color/secondary_text_color"
-                        android:textSize="@dimen/value_text_size"
-                        tools:text="Direction" />
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Date" />
+
+                        <TextView
+                            android:id="@+id/tv_hour"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="Time" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -76,45 +115,623 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="@dimen/card_view_content_padding">
 
                 <ImageView
-                    android:id="@+id/iv_visibility"
+                    android:id="@+id/iv_main2"
                     android:layout_width="@dimen/identification_image_size"
                     android:layout_height="@dimen/identification_image_size"
                     android:layout_marginEnd="@dimen/identification_image_marginEnd"
                     android:contentDescription="@string/image_contentDescription"
-                    app:srcCompat="@drawable/visibility_vector" />
-
+                    app:srcCompat="@drawable/cloud_vector" />
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left">
 
-                    <TextView
-                        android:id="@+id/tv_visibility"
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:textColor="@color/primary_text_color"
-                        android:textSize="@dimen/label_text_size"
-                        android:textStyle="bold"
-                        tools:text="Visibility" />
+                        android:orientation="vertical"
+                        android:layout_weight="1">
 
-                    <TextView
-                        android:id="@+id/tv_humidity"
-                        android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/tv_main2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Weather" />
+
+                        <TextView
+                            android:id="@+id/tv_main_description2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="condition" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:text="@string/humidity"
-                        android:textColor="@color/secondary_text_color"
-                        android:textSize="@dimen/value_text_size" />
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_date2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Date" />
+
+                        <TextView
+                            android:id="@+id/tv_hour2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="Time" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
 
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/card_view_marginStartEnd"
+            android:layout_marginEnd="@dimen/card_view_marginStartEnd"
+            android:layout_weight="1"
+            android:background="@android:color/white"
+            app:cardCornerRadius="@dimen/card_view_corner_radius"
+            app:cardElevation="@dimen/card_view_elevation">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_view_content_padding">
+
+                <ImageView
+                    android:id="@+id/iv_main3"
+                    android:layout_width="@dimen/identification_image_size"
+                    android:layout_height="@dimen/identification_image_size"
+                    android:layout_marginEnd="@dimen/identification_image_marginEnd"
+                    android:contentDescription="@string/image_contentDescription"
+                    app:srcCompat="@drawable/cloud_vector" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_main3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Weather" />
+
+                        <TextView
+                            android:id="@+id/tv_main_description3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="condition" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_date3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Date" />
+
+                        <TextView
+                            android:id="@+id/tv_hour3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="Time" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/card_view_marginStartEnd"
+            android:layout_marginEnd="@dimen/card_view_marginStartEnd"
+            android:layout_weight="1"
+            android:background="@android:color/white"
+            app:cardCornerRadius="@dimen/card_view_corner_radius"
+            app:cardElevation="@dimen/card_view_elevation">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_view_content_padding">
+
+                <ImageView
+                    android:id="@+id/iv_main4"
+                    android:layout_width="@dimen/identification_image_size"
+                    android:layout_height="@dimen/identification_image_size"
+                    android:layout_marginEnd="@dimen/identification_image_marginEnd"
+                    android:contentDescription="@string/image_contentDescription"
+                    app:srcCompat="@drawable/cloud_vector" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_main4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Weather" />
+
+                        <TextView
+                            android:id="@+id/tv_main_description4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="condition" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_date4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Date" />
+
+                        <TextView
+                            android:id="@+id/tv_hour4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="Time" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/card_view_marginStartEnd"
+            android:layout_marginEnd="@dimen/card_view_marginStartEnd"
+            android:layout_weight="1"
+            android:background="@android:color/white"
+            app:cardCornerRadius="@dimen/card_view_corner_radius"
+            app:cardElevation="@dimen/card_view_elevation">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_view_content_padding">
+
+                <ImageView
+                    android:id="@+id/iv_main5"
+                    android:layout_width="@dimen/identification_image_size"
+                    android:layout_height="@dimen/identification_image_size"
+                    android:layout_marginEnd="@dimen/identification_image_marginEnd"
+                    android:contentDescription="@string/image_contentDescription"
+                    app:srcCompat="@drawable/cloud_vector" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_main5"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Weather" />
+
+                        <TextView
+                            android:id="@+id/tv_main_description5"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="condition" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_date5"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Date" />
+
+                        <TextView
+                            android:id="@+id/tv_hour5"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="Time" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/card_view_marginStartEnd"
+            android:layout_marginEnd="@dimen/card_view_marginStartEnd"
+            android:layout_weight="1"
+            android:background="@android:color/white"
+            app:cardCornerRadius="@dimen/card_view_corner_radius"
+            app:cardElevation="@dimen/card_view_elevation">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_view_content_padding">
+
+                <ImageView
+                    android:id="@+id/iv_main6"
+                    android:layout_width="@dimen/identification_image_size"
+                    android:layout_height="@dimen/identification_image_size"
+                    android:layout_marginEnd="@dimen/identification_image_marginEnd"
+                    android:contentDescription="@string/image_contentDescription"
+                    app:srcCompat="@drawable/cloud_vector" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_main6"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Weather" />
+
+                        <TextView
+                            android:id="@+id/tv_main_description6"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="condition" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_date6"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Date" />
+
+                        <TextView
+                            android:id="@+id/tv_hour6"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="Time" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/card_view_marginStartEnd"
+            android:layout_marginEnd="@dimen/card_view_marginStartEnd"
+            android:layout_weight="1"
+            android:background="@android:color/white"
+            app:cardCornerRadius="@dimen/card_view_corner_radius"
+            app:cardElevation="@dimen/card_view_elevation">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_view_content_padding">
+
+                <ImageView
+                    android:id="@+id/iv_main7"
+                    android:layout_width="@dimen/identification_image_size"
+                    android:layout_height="@dimen/identification_image_size"
+                    android:layout_marginEnd="@dimen/identification_image_marginEnd"
+                    android:contentDescription="@string/image_contentDescription"
+                    app:srcCompat="@drawable/cloud_vector" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_main7"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Weather" />
+
+                        <TextView
+                            android:id="@+id/tv_main_description7"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="condition" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_date7"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Date" />
+
+                        <TextView
+                            android:id="@+id/tv_hour7"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="Time" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/card_view_marginStartEnd"
+            android:layout_marginEnd="@dimen/card_view_marginStartEnd"
+            android:layout_weight="1"
+            android:background="@android:color/white"
+            app:cardCornerRadius="@dimen/card_view_corner_radius"
+            app:cardElevation="@dimen/card_view_elevation">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/card_view_content_padding">
+
+                <ImageView
+                    android:id="@+id/iv_main8"
+                    android:layout_width="@dimen/identification_image_size"
+                    android:layout_height="@dimen/identification_image_size"
+                    android:layout_marginEnd="@dimen/identification_image_marginEnd"
+                    android:contentDescription="@string/image_contentDescription"
+                    app:srcCompat="@drawable/cloud_vector" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_main8"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Weather" />
+
+                        <TextView
+                            android:id="@+id/tv_main_description8"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="condition" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/tv_date8"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/primary_text_color"
+                            android:textSize="@dimen/label_text_size"
+                            android:textStyle="bold"
+                            tools:text="Date" />
+
+                        <TextView
+                            android:id="@+id/tv_hour8"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:textColor="@color/secondary_text_color"
+                            android:textSize="@dimen/value_text_size"
+                            tools:text="Time" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
 </LinearLayout>

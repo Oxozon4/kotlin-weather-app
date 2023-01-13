@@ -39,6 +39,8 @@ import java.util.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import com.google.android.material.textfield.TextInputEditText
+import com.oxozon.weatherapp.forecastModels.ForecastModel
+import com.oxozon.weatherapp.services.ForecastService
 
 class MainActivity : AppCompatActivity() {
     // Const
@@ -46,10 +48,12 @@ class MainActivity : AppCompatActivity() {
     private val baseUrl: String = "https://api.openweathermap.org/data/"
     private val preferenceName: String = "WeatherAppPreference"
     private val weatherData: String = "weather_response_data"
+    private val forecastData: String = "forecast_response_data"
 
     // fragments
     private lateinit var firstFragment: FirstFragment
     private lateinit var secondFragment: SecondFragment
+    private lateinit var thirdFragment: ThirdFragment
 
     // variables
     private lateinit var mSharedPreferences: SharedPreferences
@@ -66,6 +70,7 @@ class MainActivity : AppCompatActivity() {
 
         firstFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as FirstFragment
         secondFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView2) as SecondFragment
+        thirdFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView3) as ThirdFragment
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mSharedPreferences = getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
@@ -82,6 +87,7 @@ class MainActivity : AppCompatActivity() {
             if (inputFieldValue != "") {
                 selectedCity = inputFieldValue
                 getLocationWeatherDetails(null, null, inputFieldValue)
+                getLocationWeatherForecast(null, null, inputFieldValue)
             }
             (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                 .hideSoftInputFromWindow(inputField.windowToken, 0)
@@ -137,7 +143,12 @@ class MainActivity : AppCompatActivity() {
 
     fun onSecondFragmentCreated() {
         Log.d("test", "second fragment Created")
+    }
+
+    fun onThirdFragmentCreated() {
+        Log.d("test", "third fragment Created")
         setupUI()
+        setupForecastUI()
     }
 
     private fun isLocationEnabled(): Boolean {
@@ -194,6 +205,7 @@ class MainActivity : AppCompatActivity() {
             Log.i("Current Longitude", "$longitude")
 
             getLocationWeatherDetails(latitude, longitude, null)
+            getLocationWeatherForecast(latitude, longitude, null)
         }
     }
 
@@ -251,6 +263,7 @@ class MainActivity : AppCompatActivity() {
 
                         Log.i("Response Result", "$weatherList")
                     } else {
+                        Toast.makeText(this@MainActivity, "There was an error with your request", Toast.LENGTH_SHORT).show()
                         when (response.code()) {
                             400 -> {
                                 Log.e("Error 400", "Bad Request")
@@ -301,6 +314,7 @@ class MainActivity : AppCompatActivity() {
 
                         Log.i("Response Result", "$weatherList")
                     } else {
+                        Toast.makeText(this@MainActivity, "There was an error with your request", Toast.LENGTH_SHORT).show()
                         when (response.code()) {
                             400 -> {
                                 Log.e("Error 400", "Bad Request")
@@ -329,6 +343,118 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun getLocationWeatherForecast(latitude: Double?, longitude: Double?, city: String?) {
+
+        if (isNetworkAvailable(this@MainActivity) && city == null) {
+
+            val retrofit: Retrofit = Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            val service: ForecastService =
+                retrofit.create<ForecastService>(ForecastService::class.java)
+
+            val listCall: Call<ForecastModel> = service.getWeather(
+                latitude, longitude, null, chosenMeasurementUnit, appId
+            )
+
+            listCall.enqueue(object : Callback<ForecastModel> {
+                @SuppressLint("SetTextI18n", "CommitPrefEdits")
+                override fun onResponse(
+                    call: Call<ForecastModel>,
+                    response: Response<ForecastModel>
+                ) {
+                    if (response.isSuccessful) {
+                        hideProgressDialog()
+                        val weatherList: ForecastModel? = response.body()
+
+                        val weatherResponseJsonString = Gson().toJson(weatherList)
+                        val editor = mSharedPreferences.edit()
+                        editor.putString(forecastData, weatherResponseJsonString)
+                        editor.apply()
+                        setupForecastUI()
+
+                        Log.i("Response Result", "$weatherList")
+                    } else {
+                        Toast.makeText(this@MainActivity, "There was an error with your request", Toast.LENGTH_SHORT).show()
+                        when (response.code()) {
+                            400 -> {
+                                Log.e("Error 400", "Bad Request")
+                            }
+                            404 -> {
+                                Log.e("Error 404", "Not Found")
+                            }
+                            else -> {
+                                Log.e("Error", "Generic Error")
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<ForecastModel>, t: Throwable) {
+                    hideProgressDialog()
+                }
+            })
+        } else if (city != "") {
+            val retrofit: Retrofit = Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            val service: ForecastService =
+                retrofit.create<ForecastService>(ForecastService::class.java)
+
+            val listCall: Call<ForecastModel> = service.getWeather(
+                null, null, city, chosenMeasurementUnit, appId
+            )
+            Log.d("test2", listCall.toString())
+            listCall.enqueue(object : Callback<ForecastModel> {
+                @SuppressLint("SetTextI18n", "CommitPrefEdits")
+                override fun onResponse(
+                    call: Call<ForecastModel>,
+                    response: Response<ForecastModel>
+                ) {
+                    if (response.isSuccessful) {
+                        hideProgressDialog()
+                        val forecastList: ForecastModel? = response.body()
+
+                        val forecastResponseJsonString = Gson().toJson(forecastList)
+                        val editor = mSharedPreferences.edit()
+                        editor.putString(forecastData, forecastResponseJsonString)
+                        editor.apply()
+                        setupForecastUI()
+
+                        Log.i("Response Result", "$forecastList")
+                    } else {
+                        Toast.makeText(this@MainActivity, "There was an error with your request", Toast.LENGTH_SHORT).show()
+                        when (response.code()) {
+                            400 -> {
+                                Log.e("Error 400", "Bad Request")
+                            }
+                            404 -> {
+                                Log.e("Error 404", "Not Found")
+                            }
+                            else -> {
+                                Log.e("Error", "Generic Error")
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<ForecastModel>, t: Throwable) {
+                    hideProgressDialog()
+                }
+            })
+        } else {
+            Toast.makeText(
+                this@MainActivity,
+                "No internet connection available.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
     private fun showCustomProgressDialog() {
         mProgressDialog = Dialog(this)
         mProgressDialog!!.setContentView(R.layout.dialog_custom_progress)
@@ -346,8 +472,10 @@ class MainActivity : AppCompatActivity() {
             R.id.action_refresh -> {
                 if (selectedCity != null && selectedCity.toString() != "") {
                     getLocationWeatherDetails(null, null, selectedCity)
+                    getLocationWeatherForecast(null, null, selectedCity)
                 } else if (userLatitude != null && userLongitude != null) {
                     getLocationWeatherDetails(userLatitude, userLongitude, null)
+                    getLocationWeatherForecast(userLatitude, userLongitude, null)
                 } else {
                     requestLocationData()
                 }
@@ -400,6 +528,127 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupForecastUI() {
+        val forecastResponseJsonString = mSharedPreferences.getString(forecastData, "")
+
+        if (!forecastResponseJsonString.isNullOrEmpty()) {
+            val weatherList = Gson().fromJson(forecastResponseJsonString, ForecastModel::class.java)
+            thirdFragment. tvMain1.text = weatherList.list[0].weather[0].main
+            thirdFragment.tvMainDesc1.text = weatherList.list[0].weather[0].description
+            when (weatherList.list[0].weather[0].main) {
+                "Clear" -> thirdFragment.ivMain1.setImageResource(R.drawable.sun_vector)
+                "Thunderstorm" -> thirdFragment.ivMain1.setImageResource(R.drawable.storm_vector)
+                "Rain", "Drizzle" -> thirdFragment.ivMain1.setImageResource(R.drawable.water_vector)
+                "Clouds" -> thirdFragment.ivMain1.setImageResource(R.drawable.cloud_vector)
+                "Snow" -> thirdFragment.ivMain1.setImageResource(R.drawable.snow_vector)
+                else -> thirdFragment.ivMain1.setImageResource(R.drawable.cloud_vector)
+            }
+            val splitDate = weatherList.list[0].dt_txt.split(" ")
+            thirdFragment.tvDate1.text = splitDate[0]
+            thirdFragment.tvHour1.text = splitDate[1]
+
+            thirdFragment.tvMain2.text = weatherList.list[1].weather[0].main
+            thirdFragment.tvMainDesc2.text = weatherList.list[1].weather[0].description
+            when (weatherList.list[1].weather[0].main) {
+                "Clear" -> thirdFragment.ivMain2.setImageResource(R.drawable.sun_vector)
+                "Thunderstorm" -> thirdFragment.ivMain2.setImageResource(R.drawable.storm_vector)
+                "Rain", "Drizzle" -> thirdFragment.ivMain2.setImageResource(R.drawable.water_vector)
+                "Clouds" -> thirdFragment.ivMain2.setImageResource(R.drawable.cloud_vector)
+                "Snow" -> thirdFragment.ivMain2.setImageResource(R.drawable.snow_vector)
+                else -> thirdFragment.ivMain2.setImageResource(R.drawable.cloud_vector)
+            }
+            val splitDate2 = weatherList.list[1].dt_txt.split(" ")
+            thirdFragment.tvDate2.text = splitDate2[0]
+            thirdFragment.tvHour2.text = splitDate2[1]
+
+            thirdFragment.tvMain3.text = weatherList.list[2].weather[0].main
+            thirdFragment.tvMainDesc3.text = weatherList.list[2].weather[0].description
+            when (weatherList.list[2].weather[0].main) {
+                "Clear" -> thirdFragment.ivMain3.setImageResource(R.drawable.sun_vector)
+                "Thunderstorm" -> thirdFragment.ivMain3.setImageResource(R.drawable.storm_vector)
+                "Rain", "Drizzle" -> thirdFragment.ivMain3.setImageResource(R.drawable.water_vector)
+                "Clouds" -> thirdFragment.ivMain3.setImageResource(R.drawable.cloud_vector)
+                "Snow" -> thirdFragment.ivMain3.setImageResource(R.drawable.snow_vector)
+                else -> thirdFragment.ivMain3.setImageResource(R.drawable.cloud_vector)
+            }
+            val splitDate3 = weatherList.list[2].dt_txt.split(" ")
+            thirdFragment.tvDate3.text = splitDate3[0]
+            thirdFragment.tvHour3.text = splitDate3[1]
+
+            thirdFragment.tvMain4.text = weatherList.list[3].weather[0].main
+            thirdFragment.tvMainDesc4.text = weatherList.list[3].weather[0].description
+            when (weatherList.list[3].weather[0].main) {
+                "Clear" -> thirdFragment.ivMain4.setImageResource(R.drawable.sun_vector)
+                "Thunderstorm" -> thirdFragment.ivMain4.setImageResource(R.drawable.storm_vector)
+                "Rain", "Drizzle" -> thirdFragment.ivMain4.setImageResource(R.drawable.water_vector)
+                "Clouds" -> thirdFragment.ivMain4.setImageResource(R.drawable.cloud_vector)
+                "Snow" -> thirdFragment.ivMain4.setImageResource(R.drawable.snow_vector)
+                else -> thirdFragment.ivMain4.setImageResource(R.drawable.cloud_vector)
+            }
+            val splitDate4 = weatherList.list[3].dt_txt.split(" ")
+            thirdFragment.tvDate4.text = splitDate4[0]
+            thirdFragment.tvHour4.text = splitDate4[1]
+
+            thirdFragment.tvMain5.text = weatherList.list[4].weather[0].main
+            thirdFragment.tvMainDesc5.text = weatherList.list[4].weather[0].description
+            when (weatherList.list[4].weather[0].main) {
+                "Clear" -> thirdFragment.ivMain5.setImageResource(R.drawable.sun_vector)
+                "Thunderstorm" -> thirdFragment.ivMain5.setImageResource(R.drawable.storm_vector)
+                "Rain", "Drizzle" -> thirdFragment.ivMain5.setImageResource(R.drawable.water_vector)
+                "Clouds" -> thirdFragment.ivMain5.setImageResource(R.drawable.cloud_vector)
+                "Snow" -> thirdFragment.ivMain5.setImageResource(R.drawable.snow_vector)
+                else -> thirdFragment.ivMain5.setImageResource(R.drawable.cloud_vector)
+            }
+            val splitDate5 = weatherList.list[4].dt_txt.split(" ")
+            thirdFragment.tvDate5.text = splitDate5[0]
+            thirdFragment.tvHour5.text = splitDate5[1]
+
+            thirdFragment.tvMain6.text = weatherList.list[5].weather[0].main
+            thirdFragment.tvMainDesc6.text = weatherList.list[5].weather[0].description
+            when (weatherList.list[5].weather[0].main) {
+                "Clear" -> thirdFragment.ivMain6.setImageResource(R.drawable.sun_vector)
+                "Thunderstorm" -> thirdFragment.ivMain6.setImageResource(R.drawable.storm_vector)
+                "Rain", "Drizzle" -> thirdFragment.ivMain6.setImageResource(R.drawable.water_vector)
+                "Clouds" -> thirdFragment.ivMain6.setImageResource(R.drawable.cloud_vector)
+                "Snow" -> thirdFragment.ivMain6.setImageResource(R.drawable.snow_vector)
+                else -> thirdFragment.ivMain6.setImageResource(R.drawable.cloud_vector)
+            }
+            val splitDate6 = weatherList.list[5].dt_txt.split(" ")
+            thirdFragment.tvDate6.text = splitDate6[0]
+            thirdFragment.tvHour6.text = splitDate6[1]
+
+            thirdFragment.tvMain7.text = weatherList.list[6].weather[0].main
+            thirdFragment.tvMainDesc2.text = weatherList.list[6].weather[0].description
+            when (weatherList.list[6].weather[0].main) {
+                "Clear" -> thirdFragment.ivMain7.setImageResource(R.drawable.sun_vector)
+                "Thunderstorm" -> thirdFragment.ivMain7.setImageResource(R.drawable.storm_vector)
+                "Rain", "Drizzle" -> thirdFragment.ivMain7.setImageResource(R.drawable.water_vector)
+                "Clouds" -> thirdFragment.ivMain7.setImageResource(R.drawable.cloud_vector)
+                "Snow" -> thirdFragment.ivMain7.setImageResource(R.drawable.snow_vector)
+                else -> thirdFragment.ivMain7.setImageResource(R.drawable.cloud_vector)
+            }
+            val splitDate7 = weatherList.list[6].dt_txt.split(" ")
+            thirdFragment.tvDate7.text = splitDate7[0]
+            thirdFragment.tvHour7.text = splitDate7[1]
+
+            thirdFragment.tvMain8.text = weatherList.list[7].weather[0].main
+            thirdFragment.tvMainDesc8.text = weatherList.list[7].weather[0].description
+            when (weatherList.list[7].weather[0].main) {
+                "Clear" -> thirdFragment.ivMain8.setImageResource(R.drawable.sun_vector)
+                "Thunderstorm" -> thirdFragment.ivMain8.setImageResource(R.drawable.storm_vector)
+                "Rain", "Drizzle" -> thirdFragment.ivMain8.setImageResource(R.drawable.water_vector)
+                "Clouds" -> thirdFragment.ivMain8.setImageResource(R.drawable.cloud_vector)
+                "Snow" -> thirdFragment.ivMain8.setImageResource(R.drawable.snow_vector)
+                else -> thirdFragment.ivMain8.setImageResource(R.drawable.cloud_vector)
+            }
+            val splitDate8 = weatherList.list[7].dt_txt.split(" ")
+            thirdFragment.tvDate8.text = splitDate8[0]
+            thirdFragment.tvHour8.text = splitDate8[1]
+
+
+        }
+    }
+
     private fun getUnit(value: String): String {
         var unitValue = "°C"
         if (value == "US" || value == "LR" || value == "MM") {
@@ -416,26 +665,3 @@ class MainActivity : AppCompatActivity() {
         return sdf.format(date)
     }
 }
-
-//    private fun readFromFile() {
-//        val data = sharedPref.getString("api", null)
-//        // file does not exist
-//        if (data == null) {
-//            getCurrentWeatherData(cityName)
-//            Toast.makeText(
-//                this@MainActivity,
-//                "No file saved. Default city ($cityName) is being set.",
-//                Toast.LENGTH_LONG
-//            ).show()
-//            // file exist
-//        } else {
-//            val json = JSONObject(data)
-//            val lastCity = json.getString("name")
-//            getCurrentWeatherData(lastCity)
-//            Toast.makeText(
-//                this@MainActivity,
-//                "Last location: $lastCity is being set.",
-//                Toast.LENGTH_LONG
-//            ).show()
-//        }
-//    }
