@@ -16,7 +16,7 @@ class FirstFragment : Fragment(R.layout.first_fragment) {
     lateinit var tvLongitude: TextView
     lateinit var ivMain: ImageView
     lateinit var tvMain: TextView
-    lateinit var tvMainDescription : TextView
+    lateinit var tvMainDescription: TextView
     lateinit var tvTemp: TextView
     lateinit var tvPressure: TextView
 
@@ -32,7 +32,7 @@ class FirstFragment : Fragment(R.layout.first_fragment) {
         tvLongitude = view.findViewById(R.id.tv_longitude)
         ivMain = view.findViewById(R.id.iv_main)
         tvMain = view.findViewById(R.id.tv_main)
-        tvMainDescription= view.findViewById(R.id.tv_main_description)
+        tvMainDescription = view.findViewById(R.id.tv_main_description)
         tvTemp = view.findViewById(R.id.tv_temp)
         tvPressure = view.findViewById(R.id.tv_pressure)
         return view

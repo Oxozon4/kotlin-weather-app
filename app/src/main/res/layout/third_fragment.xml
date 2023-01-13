@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="6dp">
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -36,17 +36,18 @@
                     android:layout_marginEnd="@dimen/identification_image_marginEnd"
                     android:contentDescription="@string/image_contentDescription"
                     app:srcCompat="@drawable/cloud_vector" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_gravity="left">
+                    android:layout_gravity="left"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_main"
@@ -71,8 +72,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_date"
@@ -97,11 +98,12 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="6dp">
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -127,17 +129,18 @@
                     android:layout_marginEnd="@dimen/identification_image_marginEnd"
                     android:contentDescription="@string/image_contentDescription"
                     app:srcCompat="@drawable/cloud_vector" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_gravity="left">
+                    android:layout_gravity="left"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_main2"
@@ -162,8 +165,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_date2"
@@ -188,11 +191,12 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="6dp">
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -218,17 +222,18 @@
                     android:layout_marginEnd="@dimen/identification_image_marginEnd"
                     android:contentDescription="@string/image_contentDescription"
                     app:srcCompat="@drawable/cloud_vector" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_gravity="left">
+                    android:layout_gravity="left"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_main3"
@@ -253,8 +258,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_date3"
@@ -279,11 +284,12 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="6dp">
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -309,17 +315,18 @@
                     android:layout_marginEnd="@dimen/identification_image_marginEnd"
                     android:contentDescription="@string/image_contentDescription"
                     app:srcCompat="@drawable/cloud_vector" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_gravity="left">
+                    android:layout_gravity="left"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_main4"
@@ -344,8 +351,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_date4"
@@ -370,11 +377,12 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="6dp">
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -400,17 +408,18 @@
                     android:layout_marginEnd="@dimen/identification_image_marginEnd"
                     android:contentDescription="@string/image_contentDescription"
                     app:srcCompat="@drawable/cloud_vector" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_gravity="left">
+                    android:layout_gravity="left"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_main5"
@@ -435,8 +444,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_date5"
@@ -461,11 +470,12 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="6dp">
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -491,17 +501,18 @@
                     android:layout_marginEnd="@dimen/identification_image_marginEnd"
                     android:contentDescription="@string/image_contentDescription"
                     app:srcCompat="@drawable/cloud_vector" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_gravity="left">
+                    android:layout_gravity="left"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_main6"
@@ -526,8 +537,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_date6"
@@ -552,11 +563,12 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="6dp">
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -582,17 +594,18 @@
                     android:layout_marginEnd="@dimen/identification_image_marginEnd"
                     android:contentDescription="@string/image_contentDescription"
                     app:srcCompat="@drawable/cloud_vector" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_gravity="left">
+                    android:layout_gravity="left"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_main7"
@@ -617,8 +630,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_date7"
@@ -643,11 +656,12 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="6dp">
+        android:layout_marginBottom="6dp"
+        android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -673,17 +687,18 @@
                     android:layout_marginEnd="@dimen/identification_image_marginEnd"
                     android:contentDescription="@string/image_contentDescription"
                     app:srcCompat="@drawable/cloud_vector" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_gravity="left">
+                    android:layout_gravity="left"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_main8"
@@ -708,8 +723,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tv_date8"

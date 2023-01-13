@@ -14,4 +14,5 @@ interface ForecastService {
         @Query("q") q: String?,
         @Query("units") units: String?,
         @Query("appid") appid: String?,
-    ) : Call<ForecastModel> }
+    ): Call<ForecastModel>
+}

@@ -13,5 +13,5 @@ interface WeatherService {
         @Query("q") q: String?,
         @Query("units") units: String?,
         @Query("appid") appid: String?,
-        ) : Call<WeatherModel>
+    ): Call<WeatherModel>
 }

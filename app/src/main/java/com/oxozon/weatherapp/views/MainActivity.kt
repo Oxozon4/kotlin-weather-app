@@ -68,9 +68,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        firstFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as FirstFragment
-        secondFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView2) as SecondFragment
-        thirdFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView3) as ThirdFragment
+        firstFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as FirstFragment
+        secondFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainerView2) as SecondFragment
+        thirdFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainerView3) as ThirdFragment
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mSharedPreferences = getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
@@ -210,7 +213,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isNetworkAvailable(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val network = connectivityManager.activeNetwork ?: return false
@@ -256,14 +260,18 @@ class MainActivity : AppCompatActivity() {
                         val weatherList: WeatherModel? = response.body()
 
                         val weatherResponseJsonString = Gson().toJson(weatherList)
-                            val editor = mSharedPreferences.edit()
-                            editor.putString(weatherData, weatherResponseJsonString)
-                            editor.apply()
-                            setupUI()
+                        val editor = mSharedPreferences.edit()
+                        editor.putString(weatherData, weatherResponseJsonString)
+                        editor.apply()
+                        setupUI()
 
                         Log.i("Response Result", "$weatherList")
                     } else {
-                        Toast.makeText(this@MainActivity, "There was an error with your request", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@MainActivity,
+                            "There was an error with your request",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         when (response.code()) {
                             400 -> {
                                 Log.e("Error 400", "Bad Request")
@@ -314,7 +322,11 @@ class MainActivity : AppCompatActivity() {
 
                         Log.i("Response Result", "$weatherList")
                     } else {
-                        Toast.makeText(this@MainActivity, "There was an error with your request", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@MainActivity,
+                            "There was an error with your request",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         when (response.code()) {
                             400 -> {
                                 Log.e("Error 400", "Bad Request")
@@ -377,7 +389,11 @@ class MainActivity : AppCompatActivity() {
 
                         Log.i("Response Result", "$weatherList")
                     } else {
-                        Toast.makeText(this@MainActivity, "There was an error with your request", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@MainActivity,
+                            "There was an error with your request",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         when (response.code()) {
                             400 -> {
                                 Log.e("Error 400", "Bad Request")
@@ -427,7 +443,11 @@ class MainActivity : AppCompatActivity() {
 
                         Log.i("Response Result", "$forecastList")
                     } else {
-                        Toast.makeText(this@MainActivity, "There was an error with your request", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@MainActivity,
+                            "There was an error with your request",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         when (response.code()) {
                             400 -> {
                                 Log.e("Error 400", "Bad Request")
@@ -457,7 +477,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showCustomProgressDialog() {
         mProgressDialog = Dialog(this)
-        mProgressDialog!!.setContentView(R.layout.dialog_custom_progress)
+        mProgressDialog!!.setContentView(R.layout.progress_dialog)
         mProgressDialog!!.show()
     }
 
@@ -497,7 +517,7 @@ class MainActivity : AppCompatActivity() {
 
         if (!weatherResponseJsonString.isNullOrEmpty()) {
             val weatherList = Gson().fromJson(weatherResponseJsonString, WeatherModel::class.java)
-            for(i in weatherList.weather.indices) {
+            for (i in weatherList.weather.indices) {
                 firstFragment.tvCity.text = weatherList.name
                 firstFragment.tvCountry.text = weatherList.sys.country
 
@@ -516,7 +536,8 @@ class MainActivity : AppCompatActivity() {
                     else -> firstFragment.ivMain.setImageResource(R.drawable.cloud_vector)
                 }
 
-                firstFragment.tvTemp.text = weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
+                firstFragment.tvTemp.text =
+                    weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
                 firstFragment.tvPressure.text = weatherList.main.pressure.toString() + " hPa"
 
                 secondFragment.tvWindStrength.text = weatherList.wind.speed.toString() + " m/s"
@@ -533,7 +554,7 @@ class MainActivity : AppCompatActivity() {
 
         if (!forecastResponseJsonString.isNullOrEmpty()) {
             val weatherList = Gson().fromJson(forecastResponseJsonString, ForecastModel::class.java)
-            thirdFragment. tvMain1.text = weatherList.list[0].weather[0].main
+            thirdFragment.tvMain1.text = weatherList.list[0].weather[0].main
             thirdFragment.tvMainDesc1.text = weatherList.list[0].weather[0].description
             when (weatherList.list[0].weather[0].main) {
                 "Clear" -> thirdFragment.ivMain1.setImageResource(R.drawable.sun_vector)
