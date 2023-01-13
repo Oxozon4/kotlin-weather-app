@@ -38,6 +38,10 @@ import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.*
 import android.view.LayoutInflater
+import android.view.inputmethod.InputMethodManager
+import android.widget.Button
+import com.google.android.material.textfield.TextInputEditText
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity() {
     // Const
@@ -46,9 +50,10 @@ class MainActivity : AppCompatActivity() {
     private val preferenceName: String = "WeatherAppPreference"
     private val weatherData: String = "weather_response_data"
 
-
+    // fragments
     private lateinit var firstFragment: FirstFragment
 
+    // variables
     private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     private var mProgressDialog: Dialog? = null
@@ -61,8 +66,22 @@ class MainActivity : AppCompatActivity() {
         firstFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as FirstFragment
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mSharedPreferences = getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
-
+        setBtnClickListener()
         displayPermissionMessage()
+    }
+
+    private fun setBtnClickListener() {
+        val searchButton = findViewById<Button>(R.id.searchButton)
+
+        searchButton.setOnClickListener {
+            val inputField = findViewById<TextInputEditText>(R.id.cityInput)
+            val inputFieldValue = inputField.text.toString()
+            if (inputFieldValue != "") {
+                getLocationWeatherDetails(null, null, inputFieldValue)
+            }
+            (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                .hideSoftInputFromWindow(inputField.windowToken, 0)
+        }
     }
 
     private fun displayPermissionMessage() {
@@ -164,7 +183,7 @@ class MainActivity : AppCompatActivity() {
             val longitude = mLastLocation.longitude
             Log.i("Current Longitude", "$longitude")
 
-            getLocationWeatherDetails(latitude, longitude)
+            getLocationWeatherDetails(latitude, longitude, null)
         }
     }
 
@@ -187,9 +206,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getLocationWeatherDetails(latitude: Double, longitude: Double) {
+    private fun getLocationWeatherDetails(latitude: Double?, longitude: Double?, city: String?) {
 
-        if (isNetworkAvailable(this@MainActivity)) {
+        if (isNetworkAvailable(this@MainActivity) && city == null) {
 
             val retrofit: Retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl)
@@ -200,8 +219,9 @@ class MainActivity : AppCompatActivity() {
                 retrofit.create<WeatherService>(WeatherService::class.java)
 
             val listCall: Call<WeatherModel> = service.getWeather(
-                latitude, longitude, chosenMeasurementUnit, appId
+                latitude, longitude, null, chosenMeasurementUnit, appId
             )
+
             showCustomProgressDialog()
             listCall.enqueue(object : Callback<WeatherModel> {
                 @SuppressLint("SetTextI18n", "CommitPrefEdits")
@@ -218,6 +238,57 @@ class MainActivity : AppCompatActivity() {
                             editor.putString(weatherData, weatherResponseJsonString)
                             editor.apply()
                             setupUI()
+
+                        Log.i("Response Result", "$weatherList")
+                    } else {
+                        when (response.code()) {
+                            400 -> {
+                                Log.e("Error 400", "Bad Request")
+                            }
+                            404 -> {
+                                Log.e("Error 404", "Not Found")
+                            }
+                            else -> {
+                                Log.e("Error", "Generic Error")
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<WeatherModel>, t: Throwable) {
+                    hideProgressDialog()
+                    Log.e("Errorrrrr", t.message.toString())
+                }
+            })
+        } else if (city != "") {
+            val retrofit: Retrofit = Retrofit.Builder()
+                .baseUrl(baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            val service: WeatherService =
+                retrofit.create<WeatherService>(WeatherService::class.java)
+
+            val listCall: Call<WeatherModel> = service.getWeather(
+                null, null, city, chosenMeasurementUnit, appId
+            )
+            Log.d("test2", listCall.toString())
+            showCustomProgressDialog()
+            listCall.enqueue(object : Callback<WeatherModel> {
+                @SuppressLint("SetTextI18n", "CommitPrefEdits")
+                override fun onResponse(
+                    call: Call<WeatherModel>,
+                    response: Response<WeatherModel>
+                ) {
+                    if (response.isSuccessful) {
+                        hideProgressDialog()
+                        val weatherList: WeatherModel? = response.body()
+
+                        val weatherResponseJsonString = Gson().toJson(weatherList)
+                        val editor = mSharedPreferences.edit()
+                        editor.putString(weatherData, weatherResponseJsonString)
+                        editor.apply()
+                        setupUI()
 
                         Log.i("Response Result", "$weatherList")
                     } else {
@@ -288,7 +359,7 @@ class MainActivity : AppCompatActivity() {
                 firstFragment.tvCountry.text = weatherList.sys.country
 
                 firstFragment.tvLatitude.text = "lat: " + weatherList.coord.lat.toString()
-                firstFragment.tvLongitude.text = "lon: " +weatherList.coord.lon.toString()
+                firstFragment.tvLongitude.text = "lon: " + weatherList.coord.lon.toString()
 
                 firstFragment.tvMain.text = weatherList.weather[i].main
                 firstFragment.tvMainDescription.text = weatherList.weather[i].description
