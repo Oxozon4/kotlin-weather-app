@@ -37,6 +37,7 @@ import android.widget.TextView
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.*
+import android.view.LayoutInflater
 
 class MainActivity : AppCompatActivity() {
     // Const
@@ -44,6 +45,9 @@ class MainActivity : AppCompatActivity() {
     private val baseUrl: String = "https://api.openweathermap.org/data/"
     private val preferenceName: String = "WeatherAppPreference"
     private val weatherData: String = "weather_response_data"
+
+
+    private lateinit var firstFragment: FirstFragment
 
     private lateinit var mSharedPreferences: SharedPreferences
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
@@ -53,12 +57,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        firstFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as FirstFragment
 
         // Initialize the Fused location variable
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mSharedPreferences = getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
 
-        setupUI()
+
+
         if (!isLocationEnabled()) {
             Toast.makeText(
                 this,
@@ -101,9 +107,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * A function which is used to verify that the location or GPS is enable or not of the user's device.
-     */
+    fun onFirstFragmentCreated() {
+        Log.d("test", "first fragmentCreated")
+        setupUI()
+    }
+
     private fun isLocationEnabled(): Boolean {
 
         val locationManager: LocationManager =
@@ -113,9 +121,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    /**
-     * A function used to show the alert dialog when the permissions are denied and need to allow it from settings app info.
-     */
     private fun showRationalDialogForPermissions() {
         AlertDialog.Builder(this)
             .setMessage("It Looks like you have turned off permissions required for this feature. It can be enabled under Application Settings")
@@ -137,9 +142,6 @@ class MainActivity : AppCompatActivity() {
             }.show()
     }
 
-    /**
-     * A function to request the current location. Using the fused location provider client.
-     */
     @SuppressLint("MissingPermission")
     private fun requestLocationData() {
 
@@ -153,9 +155,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    /**
-     * A location callback object of fused location provider client where we will get the current location details.
-     */
     private val mLocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val mLastLocation: Location = locationResult.lastLocation
@@ -188,9 +187,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Function is used to get the weather details of the current location based on the latitude longitude
-     */
     private fun getLocationWeatherDetails(latitude: Double, longitude: Double) {
 
         if (isNetworkAvailable(this@MainActivity)) {
@@ -260,7 +256,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu, menu)
         return true
     }
@@ -291,13 +286,14 @@ class MainActivity : AppCompatActivity() {
             val weatherList = Gson().fromJson(weatherResponseJsonString, WeatherModel::class.java)
             for(i in weatherList.weather.indices) {
                 Log.i("Weather Name", weatherList.weather.toString())
-                findViewById<TextView>(R.id.tv_main).text = weatherList.weather[i].main
-                findViewById<TextView>(R.id.tv_main_description).text = weatherList.weather[i].description
-                findViewById<TextView>(R.id.tv_temp).text= weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
-                findViewById<TextView>(R.id.tv_humidity).text= weatherList.main.humidity.toString() + " %"
-                findViewById<TextView>(R.id.tv_min).text = weatherList.main.temp_min.toString() + " min"
-                findViewById<TextView>(R.id.tv_max).text = weatherList.main.temp_max.toString() + " max"
-                findViewById<TextView>(R.id.tv_speed).text = weatherList.wind.speed.toString()
+                Log.d("test", "using variables!")
+                firstFragment.tvMain?.text = weatherList.weather[i].main
+                firstFragment.tvMainDescription?.text = weatherList.weather[i].description
+                firstFragment.tvTemp?.text= weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
+                firstFragment.tvHumidity?.text= weatherList.main.humidity.toString() + " %"
+                firstFragment.tvMin?.text = weatherList.main.temp_min.toString() + " min"
+                firstFragment.tvMax?.text = weatherList.main.temp_max.toString() + " max"
+                firstFragment.tvSpeed?.text  = weatherList.wind.speed.toString()
                 findViewById<TextView>(R.id.tv_name).text = weatherList.name
                 findViewById<TextView>(R.id.tv_country).text = weatherList.sys.country
                 findViewById<TextView>(R.id.tv_sunrise_time).text = unixTime(weatherList.sys.sunrise)
