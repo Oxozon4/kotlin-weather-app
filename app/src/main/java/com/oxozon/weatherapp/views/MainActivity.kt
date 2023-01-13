@@ -57,14 +57,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        firstFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as FirstFragment
 
-        // Initialize the Fused location variable
+        firstFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as FirstFragment
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mSharedPreferences = getSharedPreferences(preferenceName, Context.MODE_PRIVATE)
 
+        displayPermissionMessage()
+    }
 
-
+    private fun displayPermissionMessage() {
         if (!isLocationEnabled()) {
             Toast.makeText(
                 this,
@@ -160,7 +161,6 @@ class MainActivity : AppCompatActivity() {
             val mLastLocation: Location = locationResult.lastLocation
             val latitude = mLastLocation.latitude
             Log.i("Current Latitude", "$latitude")
-
             val longitude = mLastLocation.longitude
             Log.i("Current Longitude", "$longitude")
 
@@ -287,17 +287,17 @@ class MainActivity : AppCompatActivity() {
             for(i in weatherList.weather.indices) {
                 Log.i("Weather Name", weatherList.weather.toString())
                 Log.d("test", "using variables!")
-                firstFragment.tvMain?.text = weatherList.weather[i].main
-                firstFragment.tvMainDescription?.text = weatherList.weather[i].description
-                firstFragment.tvTemp?.text= weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
-                firstFragment.tvHumidity?.text= weatherList.main.humidity.toString() + " %"
-                firstFragment.tvMin?.text = weatherList.main.temp_min.toString() + " min"
-                firstFragment.tvMax?.text = weatherList.main.temp_max.toString() + " max"
-                firstFragment.tvSpeed?.text  = weatherList.wind.speed.toString()
-                findViewById<TextView>(R.id.tv_name).text = weatherList.name
-                findViewById<TextView>(R.id.tv_country).text = weatherList.sys.country
-                findViewById<TextView>(R.id.tv_sunrise_time).text = unixTime(weatherList.sys.sunrise)
-                findViewById<TextView>(R.id.tv_sunset_time).text = unixTime(weatherList.sys.sunset)
+                firstFragment.tvCity.text = weatherList.name
+                firstFragment.tvCountry.text = weatherList.sys.country
+
+                firstFragment.tvLatitude.text = "lat: " + weatherList.coord.lat.toString()
+                firstFragment.tvLongitude.text = "lon: " +weatherList.coord.lon.toString()
+
+                firstFragment.tvMain.text = weatherList.weather[i].main
+                firstFragment.tvMainDescription.text = weatherList.weather[i].description
+
+                firstFragment.tvTemp.text = weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
+                firstFragment.tvPressure.text = weatherList.main.pressure.toString() + "hPa"
             }
         }
     }
