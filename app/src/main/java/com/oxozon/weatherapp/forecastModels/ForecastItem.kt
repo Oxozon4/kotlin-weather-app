@@ -4,7 +4,7 @@ data class ForecastItem(
     val clouds: CloudsX,
     val dt: Int,
     val dt_txt: String,
-    val main: MainX,
+    val main: Main,
     val pop: Double,
     val rain: RainX,
     val sys: SysX,

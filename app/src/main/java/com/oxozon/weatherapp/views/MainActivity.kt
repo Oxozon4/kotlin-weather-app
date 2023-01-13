@@ -21,7 +21,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-//import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.location.*
 import com.karumi.dexter.Dexter
@@ -34,8 +33,6 @@ import com.oxozon.weatherapp.services.WeatherService
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import com.google.gson.Gson
-import java.text.SimpleDateFormat
-import java.util.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import com.google.android.material.textfield.TextInputEditText
@@ -537,25 +534,26 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 firstFragment.tvTemp.text =
-                    weatherList.main.temp.toString() + getUnit(application.resources.configuration.toString())
+                    (weatherList.main.temp.toInt()).toString() + getUnit(application.resources.configuration.toString())
                 firstFragment.tvPressure.text = weatherList.main.pressure.toString() + " hPa"
 
                 secondFragment.tvWindStrength.text = weatherList.wind.speed.toString() + " m/s"
-                secondFragment.tvWindDirection.text = weatherList.wind.deg.toString() + "°"
+                secondFragment.tvWindDirection.text = "dir: " + degreesToDirection(weatherList.wind.deg)
 
                 secondFragment.tvVisibility.text = (weatherList.visibility / 100).toString() + "%"
-                secondFragment.tvHumidity.text = weatherList.main.humidity.toString() + "%"
+                secondFragment.tvHumidity.text = "RH: " + weatherList.main.humidity.toString() + "%"
             }
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupForecastUI() {
         val forecastResponseJsonString = mSharedPreferences.getString(forecastData, "")
 
         if (!forecastResponseJsonString.isNullOrEmpty()) {
             val weatherList = Gson().fromJson(forecastResponseJsonString, ForecastModel::class.java)
             thirdFragment.tvMain1.text = weatherList.list[0].weather[0].main
-            thirdFragment.tvMainDesc1.text = weatherList.list[0].weather[0].description
+            thirdFragment.tvMainDesc1.text = (weatherList.list[0].main.temp.toInt()).toString() + getUnit(application.resources.configuration.toString())
             when (weatherList.list[0].weather[0].main) {
                 "Clear" -> thirdFragment.ivMain1.setImageResource(R.drawable.sun_vector)
                 "Thunderstorm" -> thirdFragment.ivMain1.setImageResource(R.drawable.storm_vector)
@@ -569,7 +567,7 @@ class MainActivity : AppCompatActivity() {
             thirdFragment.tvHour1.text = splitDate[1]
 
             thirdFragment.tvMain2.text = weatherList.list[1].weather[0].main
-            thirdFragment.tvMainDesc2.text = weatherList.list[1].weather[0].description
+            thirdFragment.tvMainDesc2.text = (weatherList.list[1].main.temp.toInt()).toString() + getUnit(application.resources.configuration.toString())
             when (weatherList.list[1].weather[0].main) {
                 "Clear" -> thirdFragment.ivMain2.setImageResource(R.drawable.sun_vector)
                 "Thunderstorm" -> thirdFragment.ivMain2.setImageResource(R.drawable.storm_vector)
@@ -583,7 +581,7 @@ class MainActivity : AppCompatActivity() {
             thirdFragment.tvHour2.text = splitDate2[1]
 
             thirdFragment.tvMain3.text = weatherList.list[2].weather[0].main
-            thirdFragment.tvMainDesc3.text = weatherList.list[2].weather[0].description
+            thirdFragment.tvMainDesc3.text = (weatherList.list[2].main.temp.toInt()).toString() + getUnit(application.resources.configuration.toString())
             when (weatherList.list[2].weather[0].main) {
                 "Clear" -> thirdFragment.ivMain3.setImageResource(R.drawable.sun_vector)
                 "Thunderstorm" -> thirdFragment.ivMain3.setImageResource(R.drawable.storm_vector)
@@ -597,7 +595,7 @@ class MainActivity : AppCompatActivity() {
             thirdFragment.tvHour3.text = splitDate3[1]
 
             thirdFragment.tvMain4.text = weatherList.list[3].weather[0].main
-            thirdFragment.tvMainDesc4.text = weatherList.list[3].weather[0].description
+            thirdFragment.tvMainDesc4.text = (weatherList.list[3].main.temp.toInt()).toString() + getUnit(application.resources.configuration.toString())
             when (weatherList.list[3].weather[0].main) {
                 "Clear" -> thirdFragment.ivMain4.setImageResource(R.drawable.sun_vector)
                 "Thunderstorm" -> thirdFragment.ivMain4.setImageResource(R.drawable.storm_vector)
@@ -611,7 +609,7 @@ class MainActivity : AppCompatActivity() {
             thirdFragment.tvHour4.text = splitDate4[1]
 
             thirdFragment.tvMain5.text = weatherList.list[4].weather[0].main
-            thirdFragment.tvMainDesc5.text = weatherList.list[4].weather[0].description
+            thirdFragment.tvMainDesc5.text = (weatherList.list[4].main.temp.toInt()).toString() + getUnit(application.resources.configuration.toString())
             when (weatherList.list[4].weather[0].main) {
                 "Clear" -> thirdFragment.ivMain5.setImageResource(R.drawable.sun_vector)
                 "Thunderstorm" -> thirdFragment.ivMain5.setImageResource(R.drawable.storm_vector)
@@ -625,7 +623,7 @@ class MainActivity : AppCompatActivity() {
             thirdFragment.tvHour5.text = splitDate5[1]
 
             thirdFragment.tvMain6.text = weatherList.list[5].weather[0].main
-            thirdFragment.tvMainDesc6.text = weatherList.list[5].weather[0].description
+            thirdFragment.tvMainDesc6.text = (weatherList.list[5].main.temp.toInt()).toString() + getUnit(application.resources.configuration.toString())
             when (weatherList.list[5].weather[0].main) {
                 "Clear" -> thirdFragment.ivMain6.setImageResource(R.drawable.sun_vector)
                 "Thunderstorm" -> thirdFragment.ivMain6.setImageResource(R.drawable.storm_vector)
@@ -639,7 +637,7 @@ class MainActivity : AppCompatActivity() {
             thirdFragment.tvHour6.text = splitDate6[1]
 
             thirdFragment.tvMain7.text = weatherList.list[6].weather[0].main
-            thirdFragment.tvMainDesc2.text = weatherList.list[6].weather[0].description
+            thirdFragment.tvMainDesc7.text = (weatherList.list[6].main.temp.toInt()).toString() + getUnit(application.resources.configuration.toString())
             when (weatherList.list[6].weather[0].main) {
                 "Clear" -> thirdFragment.ivMain7.setImageResource(R.drawable.sun_vector)
                 "Thunderstorm" -> thirdFragment.ivMain7.setImageResource(R.drawable.storm_vector)
@@ -653,7 +651,7 @@ class MainActivity : AppCompatActivity() {
             thirdFragment.tvHour7.text = splitDate7[1]
 
             thirdFragment.tvMain8.text = weatherList.list[7].weather[0].main
-            thirdFragment.tvMainDesc8.text = weatherList.list[7].weather[0].description
+            thirdFragment.tvMainDesc8.text = (weatherList.list[7].main.temp.toInt()).toString() + getUnit(application.resources.configuration.toString())
             when (weatherList.list[7].weather[0].main) {
                 "Clear" -> thirdFragment.ivMain8.setImageResource(R.drawable.sun_vector)
                 "Thunderstorm" -> thirdFragment.ivMain8.setImageResource(R.drawable.storm_vector)
@@ -678,11 +676,8 @@ class MainActivity : AppCompatActivity() {
         return unitValue
     }
 
-    @SuppressLint("SimpleDateFormat")
-    private fun unixTime(timex: Long): String? {
-        val date = Date(timex * 1000L)
-        val sdf = SimpleDateFormat("HH:mm", Locale.UK)
-        sdf.timeZone = TimeZone.getDefault()
-        return sdf.format(date)
+    private fun degreesToDirection(degrees: Int): String {
+        val directions = arrayOf("N", "NE", "E", "SE", "S", "SW", "W", "NW", "N")
+        return directions[(degrees / 45 + 0.5).toInt() % 8]
     }
 }
